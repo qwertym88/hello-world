@@ -4,8 +4,8 @@
 #include <tuple>
 
 /*
-	±äÌ¬ÄÑ£¬ÂıÂıÏû»¯°É 
-	 https://www.cnblogs.com/qicosmos/p/3723388.html ´óÀĞ£¨¿ÉÏ§ËûµÄ³ÌĞòºÃÏñÓĞµãÎÊÌâ£© 
+	å˜æ€éš¾ï¼Œæ…¢æ…¢æ¶ˆåŒ–å§ 
+	 https://www.cnblogs.com/qicosmos/p/3723388.html å¤§ä½¬ï¼ˆå¯æƒœä»–çš„ç¨‹åºå¥½åƒæœ‰ç‚¹é—®é¢˜ï¼‰ 
 */ 
 
 namespace simple {
@@ -22,11 +22,11 @@ static placeholder<4> _4; static placeholder<9>  _9;  static placeholder<14> _14
 static placeholder<5> _5; static placeholder<10> _10; static placeholder<15> _15; static placeholder<20> _20;
 
 // sequence & generater
-// ĞòÁĞÓëÉú³ÉÆ÷ ? ?
+// åºåˆ—ä¸ç”Ÿæˆå™¨ çœŸçš„æ˜¯å•Šï¼ï¼ 
 
 template <int... N>
 struct seq { typedef seq<N..., sizeof...(N)> next_type; };
-//Éú³ÉĞòÁĞ£¿
+//ç”Ÿæˆåºåˆ—ï¼ 
 // seq<0>::next_type == seq<0,1>
 // seq<0>::next_type::next_type == seq<0,1,2>
 
@@ -42,7 +42,7 @@ struct gen<>
 template <typename P1, typename... P>
 struct gen<P1, P...>
 {
-    typedef typename gen<P...>::seq_type::next_type seq_type;// ? ²»Ó¦¸ÃÊÇ¿Õ°É? 
+    typedef typename gen<P...>::seq_type::next_type seq_type;// è¿”å›0---è¾“å…¥ä¸ªæ•°-1çš„åºåˆ— 
 };
 
 // select	// ?
@@ -50,29 +50,29 @@ struct gen<P1, P...>
 template <typename T, class TupleT>
 inline auto select(T&& val, TupleT& /*tp*/) -> T&&
 {
-    return std::forward<T>(val);
+    return std::forward<T>(val);//ä¼ å…¥äº‹å…ˆè®¾å®šå¥½çš„é»˜è®¤å‚æ•° 
 }
 
 template <int N, class TupleT>
 inline auto select(placeholder<N>, TupleT& tp) -> decltype(std::get<N - 1>(tp))
 {
-    return std::get<N - 1>(tp);
+    return std::get<N - 1>(tp);//tpä¸­ç¬¬N-1ä¸ªå‚æ•°å¯¹åº”placeholder<N>ï¼Œå³placeholder<1>(_1)å¯¹åº”ç¬¬ä¸€ä¸ªå‚æ•° 
 }
 
 // result type traits
 
 template <typename F>
-struct result_traits : result_traits<decltype(&F::operator())> {};// È¡·Âº¯Êı·µ»ØÀàĞÍ 
+struct result_traits : result_traits<decltype(&F::operator())> {};// å–ä»¿å‡½æ•°è¿”å›ç±»å‹ 
 
 template <typename T>
-struct result_traits<T*> : result_traits<T> {};// È¡·ÇÖ¸ÕëÀàĞÍ£¬ÔÙ¼ÌĞøÅĞ¶Ï 
+struct result_traits<T*> : result_traits<T> {};// å–éæŒ‡é’ˆç±»å‹ï¼Œå†ç»§ç»­åˆ¤æ–­ 
 
 /* check function */
 
-template <typename R, typename... P>//È¡ÆÕÍ¨º¯Êı¡¢³ÉÔ±º¯Êı·µ»ØÀàĞÍ 
+template <typename R, typename... P>//å–æ™®é€šå‡½æ•°ã€æˆå‘˜å‡½æ•°è¿”å›ç±»å‹ 
 struct result_traits<R(*)(P...)> { typedef R type; };
 
-/* check member function */
+/* check member function */	//å…¼å®¹å‡½æ•°cvç¬¦
 
 #define RESULT_TRAITS__(...) \
     template <typename R, typename C, typename... P> \
@@ -86,40 +86,40 @@ RESULT_TRAITS__(const volatile)
 #undef RESULT_TRAITS__
 
 // The invoker for call a callable
-// µ÷ÓÃÒ»¸ö¿Éµ÷ÓÃµÄ³ÌĞò  ·´Éä£¿ 
+// è°ƒç”¨ä¸€ä¸ªå¯è°ƒç”¨çš„ç¨‹åº  åå°„ï¼Ÿ 
 
-template <typename T>//ÊÇ·ñÎªÖ¸Õë 
+template <typename T>//æ˜¯å¦ä¸ºæŒ‡é’ˆ 
 struct is_pointer_noref
     : std::is_pointer<typename std::remove_reference<T>::type>
 {};
 
-template <typename T>//ÊÇ·ñÎª³ÉÔ±º¯Êı 
+template <typename T>//æ˜¯å¦ä¸ºæˆå‘˜å‡½æ•° 
 struct is_memfunc_noref
     : std::is_member_function_pointer<typename std::remove_reference<T>::type>
 {};
-/////////////º¯Êı°ó¶¨µÄÖ´ĞĞ³ÌĞò 
-template <typename R, typename F, typename... P>//ÆÕÍ¨º¯ÊıÖ¸Õë
+/////////////å‡½æ•°ç»‘å®šçš„æ‰§è¡Œç¨‹åº 
+template <typename R, typename F, typename... P>//æ™®é€šå‡½æ•°æŒ‡é’ˆ
 inline typename std::enable_if<is_pointer_noref<F>::value,
 R>::type invoke(F&& f, P&&... par)
 {
     return (*std::forward<F>(f))(std::forward<P>(par)...);
 }
 
-template <typename R, typename F, typename P1, typename... P>//¶ÔÏóÖ¸Õë
+template <typename R, typename F, typename P1, typename... P>//å¯¹è±¡æŒ‡é’ˆ
 inline typename std::enable_if<is_memfunc_noref<F>::value && is_pointer_noref<P1>::value,
 R>::type invoke(F&& f, P1&& this_ptr, P&&... par)
 {
     return (std::forward<P1>(this_ptr)->*std::forward<F>(f))(std::forward<P>(par)...);
 }
 
-template <typename R, typename F, typename P1, typename... P>//¶ÔÏó³ÉÔ±º¯Êı 
+template <typename R, typename F, typename P1, typename... P>//å¯¹è±¡æˆå‘˜å‡½æ•° 
 inline typename std::enable_if<is_memfunc_noref<F>::value && !is_pointer_noref<P1>::value,
 R>::type invoke(F&& f, P1&& this_obj, P&&... par)
 {
     return (std::forward<P1>(this_obj).*std::forward<F>(f))(std::forward<P>(par)...);
 }
 
-template <typename R, typename F, typename... P>//ÆÕÍ¨º¯Êı 
+template <typename R, typename F, typename... P>//æ™®é€šå‡½æ•° 
 inline typename std::enable_if<!is_pointer_noref<F>::value && !is_memfunc_noref<F>::value,
 R>::type invoke(F&& f, P&&... par)
 {
@@ -132,42 +132,64 @@ template<typename FuncT, typename... ArgsT>
 class fr
 {
 	//private
-    typedef std::tuple<typename std::decay<ArgsT>::type...> args_type;//º¯Êı±äÁ¿ 
-    typedef typename std::decay<FuncT>::type                callable_type;//º¯ÊıÌå 
-    typedef typename result_traits<callable_type>::type     result_type;//·µ»ØÖµ 
+    typedef std::tuple<typename std::decay<ArgsT>::type...> args_type;//å‡½æ•°å˜é‡ å› ä¸ºæ˜¯å˜å‚ï¼Œæ‰€ä»¥è¦å°è£…æˆtuple 
+    typedef typename std::decay<FuncT>::type                callable_type;//å‡½æ•°ä½“ 
+    typedef typename result_traits<callable_type>::type     result_type;//è¿”å›å€¼ 
 
-    callable_type call_;//º¯ÊıÌå 
-    args_type     args_;//º¯Êı±äÁ¿ 
+    callable_type call_;//å‡½æ•°ä½“ 
+    args_type     args_;//å‡½æ•°å˜é‡ 
 
     template <class TupleT, int... N>
-    result_type do_call(TupleT& tp, seq<N...>)//ÔËĞĞ 
+    result_type do_call(TupleT& tp/*è¿è¡Œæ—¶ä¼ å…¥çš„å‚æ•°*/, seq<N...>)//è¿è¡Œ 
     {
-        return invoke<result_type>(call_, select(std::get<N>(args_), tp)...);
+        return invoke<result_type>(call_, select(std::get<N>(args_)/*åˆå§‹åŒ–æ—¶å®šä¹‰çš„å‚æ•°*/, tp)...);//å·§å¦™åº”ç”¨...çš„æ–¹æ³• 
+        //							 	/*é€‰æ‹©*/	/*å·§å¦™çš„æ‹†tupleæ–¹æ³•*/
     }
+    /*...å¸¸è§„ä½¿ç”¨ 
+		
+int sum(int count, ...);    ã€€ã€€//åŸå‹ä¸­ä½¿ç”¨çœç•¥å·
+ 
+int sum(int count, ...){    ã€€ã€€//count è¡¨ç¤ºå¯å˜å‚æ•°ä¸ªæ•°
+    va_list ap;ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€ã€€//å£°æ˜ä¸€ä¸ªva_listå˜é‡
+    va_start(ap, count);ã€€ã€€ ã€€ã€€//åˆå§‹åŒ–ï¼Œç¬¬äºŒä¸ªå‚æ•°ä¸ºæœ€åä¸€ä¸ªç¡®å®šçš„å½¢å‚
+ 
+    int sum = 0;  
+    for(int i = 0; i < count; i++)          
+        sum += va_arg(ap, int); //è¯»å–å¯å˜å‚æ•°ï¼Œçš„äºŒä¸ªå‚æ•°ä¸ºå¯å˜å‚æ•°çš„ç±»å‹
+ 
+    va_end(ap);          ã€€ã€€ã€€ã€€//æ¸…ç†å·¥ä½œ 
+    return sum;
+	//https://blog.csdn.net/qq_27385759/article/details/79136324 
+	//https://blog.csdn.net/w746805370/article/details/51172153 //å¤§ä½¬çº§ï¼Œvar_argçš„åŸç†åŠå®ç° C 
+	//https://blog.csdn.net/nodeathphoenix/article/details/18154275 //	ADL
+	//https://www.cnblogs.com/gtarcoder/p/4810614.html
+	// https://blog.csdn.net/luoqie123/article/details/52054855 //é«˜èƒ½ 
+	http://blog.51cto.com/5662165/2142574?source=drh
+	*/ 
 
 public:
-    template<typename F, typename... P>//³õÊ¼»¯ 
+    template<typename F, typename... P>//åˆå§‹åŒ– 
     fr(F&& f, P&&... par)
         : call_(std::forward<F>(f))
         , args_(std::forward<P>(par)...)
     {}
 
-    template <typename... P>//µ÷ÓÃ 
-    result_type operator()(P&&... par)
+    template <typename... P>//æ­£å¼è°ƒç”¨ 
+    result_type operator()(P&&... par)//è°ƒç”¨æ—¶çš„å‚æ•° 
     {
         /*
             <MSVC 2013> type_traits(1509): fatal error C1001
             With: std::forward<P>(par)...
         */
-        std::tuple<typename std::decay<P>::type...> pars(static_cast<P&&>(par)...);// ? 
-        return do_call(pars, typename gen<ArgsT...>::seq_type());
+        std::tuple<typename std::decay<P>::type...> pars(static_cast<P&&>(par)...);// å‚æ•°
+        return do_call(pars, typename gen<ArgsT...>::seq_type());//ç ”ç©¶äº†å¥½ä¹…o(â•¥ï¹â•¥)oï¼Œè¿™ä¸ªgenè¿”å›<0,1,2,...,å‚æ•°ä¸ªæ•°-1> 
     }
 };
 
 // Bind function arguments
 
 template <typename F, typename... P>
-inline fr<F, P...> bind(F&& f, P&&... par)//Ò»¸öĞ¡·â×° 
+inline fr<F, P...> bind(F&& f, P&&... par)//ä¸€ä¸ªå°å°è£… 
 {
     return fr<F, P...>(std::forward<F>(f), std::forward<P>(par)...);
 }
