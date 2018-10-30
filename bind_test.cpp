@@ -21,7 +21,8 @@
               << TEST_FUNC_NAME << " ->: " __VA_ARGS__ << std::endl \
               << "----------------------------------" << std::endl
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////检查返回值判断是否正确 
+//大神级测试代码看不懂很正常... 
 
 namespace test_result_traits_np
 {
@@ -48,7 +49,7 @@ namespace test_result_traits_np
     };
 }
 
-void test_result_traits(void)
+void test_result_traits(void) //应全部输出int（实际也是） 
 {
     TEST_CASE();
     using namespace test_result_traits_np;
@@ -58,7 +59,7 @@ void test_result_traits(void)
     check<result_traits<Func>::type>();
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////检查绑定器（如果可以这么说） 
 
 namespace test_fr_np
 {
@@ -80,7 +81,7 @@ namespace test_fr_np
     };
 }
 
-void test_fr(void)
+void test_fr(void)//事实证明达到了我们需要的效果 
 {
     TEST_CASE();
     using namespace test_fr_np;
@@ -93,7 +94,7 @@ void test_fr(void)
     f2(123, 321);
 }
 
-//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////综合测试 
 
 namespace test_bind_np
 {
@@ -208,33 +209,33 @@ namespace test_bind_np
 void test_bind(void)
 {
     TEST_CASE();
-    using namespace test_bind_np;
+    using namespace test_bind_np;//普通函数 
     {
         bind(func0_0)();
         std::cout << bind(func0_1)() << std::endl;
         std::cout << bind(func1, _1)(123) << std::endl;
         std::cout << bind(func2, _1, _1)(321) << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << std::endl;//成员函数 
     {
         B a;
-        std::cout << bind(&B::func, a, 1, _1, 3, 4)(2) << std::endl;
-        std::cout << bind(&B::func_const, &a, 123)() << std::endl;
+        std::cout << bind(&B::func, a, 1, _1, 3, 4)(2) << std::endl;//普通 
+        std::cout << bind(&B::func_const, &a, 123)() << std::endl;//const 
         A* pa = &a;
-        std::cout << bind(&A::func, pa, _4, _3, _2, _1)(1, 2, 3, 4) << std::endl;
-        std::cout << bind(B::funcS, 123)() << std::endl;
+        std::cout << bind(&A::func, pa, _4, _3, _2, _1)(1, 2, 3, 4) << std::endl;//继承（多态） 
+        std::cout << bind(B::funcS, 123)() << std::endl;//static函数 
     }
-    std::cout << std::endl;
+    std::cout << std::endl;//仿函数 
     {
         Func0 f0;
         std::cout << bind(&f0)() << std::endl;
         Func1 f1;
         std::string s("Hello Bind!");
-        std::cout << simple::bind(f1, std::ref(s))() << std::endl; // avoids ADL
+        std::cout << simple::bind(f1, std::ref(s))() << std::endl; // avoids ADL// ? 
         Func2 f2;
         std::cout << bind(f2)() << std::endl;
     }
-    std::cout << std::endl;
+    std::cout << std::endl;//特殊定义了的函数 
     {
         UncopyableFunc ff;
         std::cout << bind(std::move(ff))() << std::endl;
@@ -248,7 +249,6 @@ int main(void)
     test_result_traits();
     test_fr();
     test_bind();
-
     TEST_CASE(<< "Finished!");
     return 0;
 }
