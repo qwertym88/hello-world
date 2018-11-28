@@ -6,4 +6,4 @@
 
 <https://github.com/EYHN/hexo-helper-live2d/blob/master/README.zh-CN.md>
 
-<https://github.com/EYHN/hexo-helper-live2d/blob/master/README.zh-CN.md>
+<https://zh.moegirl.org/Live2D>
