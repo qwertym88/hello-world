@@ -44,3 +44,5 @@
 ------
 目前看有两个api，一个是<https://github.com/galnetwen/Live2D>,一个用webgl渲染，结合pixi的东西。看着有点复杂。
 还有一个<https://github.com/fghrsh/live2d_api>，php的，目前实在看不懂。
+
+有点想用<https://mx.paugram.com/>的12d.js当api。重点突破口在888行处
