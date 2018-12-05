@@ -40,3 +40,7 @@
 官方api，改动几率不大（应该吧）
 
 细节还不对，人物只显示了部分，动作没有绑定，再接再厉吧。
+
+------
+目前看有两个api，一个是<https://github.com/galnetwen/Live2D>,一个用webgl渲染，结合pixi的东西。看着有点复杂。
+还有一个<https://github.com/fghrsh/live2d_api>，php的，目前实在看不懂。
