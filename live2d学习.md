@@ -46,3 +46,7 @@
 还有一个<https://github.com/fghrsh/live2d_api>，php的，目前实在看不懂。
 
 有点想用<https://mx.paugram.com/>的12d.js当api。重点突破口在888行处
+
+------
+#### 最终决定套用现成api+魔改
+live2d_api用fghrsh的，其他的再说
